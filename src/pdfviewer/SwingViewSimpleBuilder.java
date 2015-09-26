@@ -8,6 +8,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Enumeration;
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -60,8 +62,9 @@ public class SwingViewSimpleBuilder extends SwingViewBuilder{
         this.voidButton = (JRadioButton) buttons.nextElement();        
         this.skipButton = (JRadioButton) buttons.nextElement();
         this.selectButton = (JRadioButton) buttons.nextElement();
-        this.seqText = seqText;        
-        
+        this.seqText = seqText;     
+        Icon ic = new ImageIcon("heart.gif");
+        this.seqText.setIcon(ic);
         //voidButton.setEnabled(false);
         voidButton.addActionListener(new java.awt.event.ActionListener() {
             @Override

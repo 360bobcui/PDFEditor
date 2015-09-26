@@ -106,9 +106,15 @@ public class Pdfviewer {
     
     private static void initComponent(final String pdfFileName, final String date) {
         voidButton = new JRadioButton();
+        Icon ic1 = new ImageIcon("heartbig.gif");
+        voidButton.setIcon(ic1);
         selectButton = new JRadioButton();
+        Icon ic2 = new ImageIcon("heartbig.gif");
+        selectButton.setIcon(ic2);        
         skipButton = new JRadioButton();
-        
+        Icon ic3 = new ImageIcon("heartbig.gif");
+        skipButton.setIcon(ic3);    
+
         voidButton.setText("Void");        
         skipButton.setText("Skip");
         selectButton.setText("Select");
@@ -119,6 +125,11 @@ public class Pdfviewer {
         statusButtonGroup.add(selectButton);
         
         seqText = new JLabel();
+        Icon ic = new ImageIcon("heart.gif");
+        seqText.setIcon(ic);
+
+        seqText.setAlignmentX((float) 3000.0);
+         seqText.setSize(500,100);
         seqText.setText("----");
         statusArray = new Boolean[GlobalVar.NUM_BUTTON][GlobalVar.MAX_NUM_PAGES];
         
@@ -127,16 +138,26 @@ public class Pdfviewer {
                 statusArray[i][j] = false;
             }
         }
+       
+        for (int j = 0; j < GlobalVar.MAX_NUM_PAGES; j++) {
+            statusArray[GlobalVar.SELECT_BUTTON_INDEX][j] = true;
+        }
+ 
+
         
         submitPDFButton = new JButton();
         submitPDFButton.setText("Submit PDF");
-        
+        Icon ic4 = new ImageIcon("signup.gif");
+        submitPDFButton.setIcon(ic4);            
+        submitPDFButton.setSize(1900, 100);
         submitPDFButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 try {
                     System.out.println("PDF is pressed");
-                    generatePDFFile(date, pdfFileName, statusArray);
+                    String cycle = JOptionPane.showInputDialog(null, "Please enter a cycle number");
+                    System.out.println("The cycle number is " + cycle);
+                    generatePDFFile(date, pdfFileName, statusArray, cycle);
                     JOptionPane.showMessageDialog(null, "The PDF is created successfully!");   
                 } catch (IOException ex) {
                     Logger.getLogger(Pdfviewer.class.getName()).log(Level.SEVERE, null, ex);
@@ -147,7 +168,7 @@ public class Pdfviewer {
         });
     }
     
-    public static void generatePDFFile(String date, String pdfFileName, Boolean[][] statusArray) throws IOException, COSVisitorException {
+    public static void generatePDFFile(String date, String pdfFileName, Boolean[][] statusArray,String cycle) throws IOException, COSVisitorException {
         PDDocument pdf = PDDocument.load(pdfFileName);
         //String[] names = pdfFileName.split("\\.");
         String targetFile = "";
@@ -170,11 +191,15 @@ public class Pdfviewer {
         while(iter.hasNext()) {
             PDPage page = iter.next();
             PDPageContentStream stream = new PDPageContentStream(pdf, page, true, false);            
+            
+            // == date stamp
             stream.beginText();
             stream.setFont(PDType1Font.HELVETICA, 20);
-            stream.moveTextPositionByAmount(100, 300);            
+            stream.moveTextPositionByAmount(200, 20);            
             stream.drawString(date); //date stamp 
             stream.endText();
+            // == end of date stamp
+            
              // == void stamp
             if (statusArray[GlobalVar.VOID_BUTTON_INDEX][pageNum]) {
                 stream.drawImage(voidMark, 100, 200);
@@ -188,7 +213,7 @@ public class Pdfviewer {
                 stream.moveTextPositionByAmount(600, 400);
                 stream.setTextRotation(3.14/2, 600, 400); // rotate text 90 degree at x = 600, y = 400
 
-                stream.drawString(globalCounterGenerator(sequenceNum));
+                stream.drawString(cycle + "/" + globalCounterGenerator(sequenceNum));
                 sequenceNum++;
                 stream.endText();
             }
